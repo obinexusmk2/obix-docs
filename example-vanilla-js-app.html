@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OBIX JSX — Vanilla JS Demo</title>
+  <style>
+    :root {
+      --obix-primary: #0066cc;
+      --obix-success: #28a745;
+      --obix-danger: #dc3545;
+      --obix-warning: #ffc107;
+      --obix-info: #17a2b8;
+      --obix-gray-50: #f9fafb;
+      --obix-gray-100: #f3f4f6;
+      --obix-gray-200: #e5e7eb;
+      --obix-gray-500: #6b7280;
+      --obix-gray-900: #111827;
+      --obix-touch-min: 48px;
+      --obix-border-radius: 0.375rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 1.5rem;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--obix-gray-900);
+      background: white;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin: 0 0 1.5rem;
+      color: var(--obix-gray-900);
+    }
+
+    /* Form Styles */
+    .obix-form {
+      padding: 1.5rem;
+      border-radius: var(--obix-border-radius);
+      background: white;
+      border: 1px solid var(--obix-gray-200);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .obix-form__legend {
+      display: block;
+      margin: 0 0 1.5rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--obix-gray-900);
+    }
+
+    /* Input Group */
+    .obix-input-group {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .obix-input__label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--obix-gray-900);
+    }
+
+    .obix-input__label-required {
+      color: var(--obix-danger);
+      margin-left: 0.25rem;
+    }
+
+    .obix-input {
+      min-height: var(--obix-touch-min);
+      padding: 0.5rem 0.75rem;
+      border: 2px solid var(--obix-gray-200);
+      border-radius: var(--obix-border-radius);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .obix-input:focus {
+      outline: none;
+      border-color: var(--obix-primary);
+      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+
+    .obix-input:disabled {
+      background: var(--obix-gray-50);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .obix-input[aria-invalid="true"] {
+      border-color: var(--obix-danger);
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+
+    .obix-input__hint {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+      color: var(--obix-gray-500);
+    }
+
+    .obix-input__error {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+      color: var(--obix-danger);
+      font-weight: 500;
+    }
+
+    /* Button */
+    .obix-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: var(--obix-touch-min);
+      min-height: var(--obix-touch-min);
+      padding: 0.5rem 1rem;
+      border: 2px solid transparent;
+      border-radius: var(--obix-border-radius);
+      font-size: 1rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background-color 0.2s ease-out;
+      white-space: nowrap;
+    }
+
+    .obix-button:focus {
+      outline: 2px solid var(--obix-primary);
+      outline-offset: 2px;
+    }
+
+    .obix-button:disabled,
+    .obix-button[aria-disabled="true"] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .obix-button--primary {
+      background: var(--obix-primary);
+      color: white;
+    }
+
+    .obix-button--primary:hover:not(:disabled) {
+      background: #0052a3;
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+    }
+
+    .obix-button--secondary {
+      background: var(--obix-gray-100);
+      color: var(--obix-gray-900);
+      border-color: var(--obix-gray-200);
+    }
+
+    .obix-button--secondary:hover:not(:disabled) {
+      background: var(--obix-gray-200);
+    }
+
+    /* Alert */
+    .obix-alert {
+      padding: 1rem;
+      border-radius: var(--obix-border-radius);
+      margin-bottom: 1rem;
+      border-left: 4px solid;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .obix-alert--success {
+      background: #d4edda;
+      border-color: var(--obix-success);
+      color: #155724;
+    }
+
+    .obix-alert--error {
+      background: #f8d7da;
+      border-color: var(--obix-danger);
+      color: #721c24;
+    }
+
+    .obix-alert--info {
+      background: #d1ecf1;
+      border-color: var(--obix-info);
+      color: #0c5460;
+    }
+
+    .obix-alert__content {
+      flex: 1;
+    }
+
+    .obix-alert__close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      margin-left: 1rem;
+    }
+
+    /* Loading */
+    .obix-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: var(--obix-primary);
+      font-weight: 500;
+    }
+
+    .obix-loading__spinner {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid var(--obix-gray-200);
+      border-top-color: var(--obix-primary);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      body {
+        padding: 1rem;
+      }
+
+      .obix-form {
+        padding: 1rem;
+      }
+
+      .obix-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>OBIX JSX Components</h1>
+    <p>Vanilla JavaScript + ES Modules — No build step required</p>
+
+    <div id="app"></div>
+  </div>
+
+  <script type="module">
+    /**
+     * OBIX JSX Components Demo
+     *
+     * Demonstrates:
+     * 1. Creating components via h() factory
+     * 2. Composing components
+     * 3. State management (manual)
+     * 4. Event handling
+     * 5. Immutable state updates
+     */
+
+    // In a real app, import from NPM:
+    // import { h, Fragment } from '@obinexusltd/obix-jsx-adapter';
+    // import { obixForm, obixInput, obixButton, obixAlert } from '@obinexusltd/obix-jsx-components';
+
+    // For this demo, we'll mock the h() factory
+    // (In production, TypeScript compiles JSX to h() calls)
+
+    class ObixComponent {
+      constructor(name, state, actions, render) {
+        this.name = name;
+        this.state = state;
+        this.actions = actions;
+        this.render = render;
+        this.children = [];
+      }
+    }
+
+    function createButton(config) {
+      const state = {
+        label: config.label || '',
+        variant: config.variant || 'default',
+        disabled: config.disabled || false,
+        loading: config.loading || false,
+      };
+
+      const actions = {
+        setLoading: (state, loading) => ({ ...state, loading, disabled: loading }),
+        setLabel: (state, label) => ({ ...state, label }),
+      };
+
+      const render = (state) => `
+        <button
+          type="button"
+          class="obix-button obix-button--${state.variant}"
+          ${state.disabled ? 'disabled' : ''}
+          ${state.loading ? 'aria-busy="true" aria-disabled="true"' : ''}
+        >
+          ${state.loading ? '<span class="obix-loading__spinner"></span>' : ''}
+          ${state.label}
+        </button>
+      `;
+
+      return new ObixComponent('Button', state, actions, render);
+    }
+
+    function createInput(config) {
+      const state = {
+        name: config.name || '',
+        type: config.type || 'text',
+        label: config.label || '',
+        placeholder: config.placeholder || '',
+        value: config.value || '',
+        required: config.required || false,
+        error: config.error || null,
+        hint: config.hint || '',
+      };
+
+      const actions = {
+        setValue: (state, value) => ({ ...state, value }),
+        setError: (state, error) => ({ ...state, error }),
+      };
+
+      const render = (state) => `
+        <div class="obix-input-group">
+          <label class="obix-input__label" for="${state.name}">
+            ${state.label}
+            ${state.required ? '<span class="obix-input__label-required">*</span>' : ''}
+          </label>
+          <input
+            class="obix-input"
+            id="${state.name}"
+            type="${state.type}"
+            name="${state.name}"
+            placeholder="${state.placeholder}"
+            value="${state.value}"
+            ${state.required ? 'required' : ''}
+            ${state.error ? 'aria-invalid="true"' : ''}
+            aria-describedby="${state.error ? state.name + '-error' : state.hint ? state.name + '-hint' : ''}"
+          >
+          ${state.hint ? `<span class="obix-input__hint" id="${state.name}-hint">${state.hint}</span>` : ''}
+          ${state.error ? `<span class="obix-input__error" id="${state.name}-error" role="alert">${state.error}</span>` : ''}
+        </div>
+      `;
+
+      return new ObixComponent('Input', state, actions, render);
+    }
+
+    function createForm(config) {
+      const state = {
+        label: config.label || '',
+        errorSummary: config.errorSummary !== false,
+      };
+
+      const actions = {};
+
+      const render = (state) => `
+        <form class="obix-form" aria-label="${state.label}">
+          <legend class="obix-form__legend">${state.label}</legend>
+          ${state.errorSummary ? '<div role="alert" class="obix-form__error-summary" style="display: none;"></div>' : ''}
+        </form>
+      `;
+
+      return new ObixComponent('Form', state, actions, render);
+    }
+
+    function createAlert(config) {
+      const state = {
+        message: config.message || '',
+        type: config.type || 'info',
+        visible: true,
+      };
+
+      const actions = {
+        dismiss: (state) => ({ ...state, visible: false }),
+      };
+
+      const render = (state) => `
+        <div class="obix-alert obix-alert--${state.type}" role="alert" aria-live="polite" ${!state.visible ? 'hidden' : ''}>
+          <div class="obix-alert__content">${state.message}</div>
+          <button class="obix-alert__close" type="button" aria-label="Close">&times;</button>
+        </div>
+      `;
+
+      return new ObixComponent('Alert', state, actions, render);
+    }
+
+    // ========================================================================
+    // APP STATE & RENDERING
+    // ========================================================================
+
+    let appState = {
+      email: '',
+      password: '',
+      error: null,
+      loading: false,
+      success: false,
+    };
+
+    function render() {
+      // Create components
+      const emailInput = createInput({
+        name: 'email',
+        type: 'email',
+        label: 'Email Address',
+        placeholder: 'you@example.com',
+        value: appState.email,
+        required: true,
+        hint: 'We\'ll never share your email.',
+        error: appState.error && appState.error.email ? appState.error.email : null,
+      });
+
+      const passwordInput = createInput({
+        name: 'password',
+        type: 'password',
+        label: 'Password',
+        placeholder: '••••••••',
+        value: appState.password,
+        required: true,
+        hint: 'Minimum 8 characters.',
+        error: appState.error && appState.error.password ? appState.error.password : null,
+      });
+
+      const submitBtn = createButton({
+        label: appState.loading ? 'Signing in...' : 'Sign In',
+        variant: 'primary',
+        disabled: appState.loading,
+        loading: appState.loading,
+      });
+
+      // Compose form
+      const form = createForm({ label: 'Member Login' });
+
+      // Render everything
+      let html = '';
+
+      if (appState.success) {
+        const successAlert = createAlert({ message: '✓ Logged in successfully!', type: 'success' });
+        html += successAlert.render(successAlert.state);
+      }
+
+      if (appState.error && appState.error.general) {
+        const errorAlert = createAlert({ message: appState.error.general, type: 'error' });
+        html += errorAlert.render(errorAlert.state);
+      }
+
+      html += form.render(form.state);
+      html += emailInput.render(emailInput.state);
+      html += passwordInput.render(passwordInput.state);
+      html += submitBtn.render(submitBtn.state);
+      html += '</form>';
+
+      document.getElementById('app').innerHTML = html;
+    }
+
+    // ========================================================================
+    // EVENT HANDLING
+    // ========================================================================
+
+    document.getElementById('app').addEventListener('input', (e) => {
+      if (e.target.name === 'email') {
+        appState.email = e.target.value;
+      } else if (e.target.name === 'password') {
+        appState.password = e.target.value;
+      }
+      appState.error = null; // Clear errors on input
+      render();
+    });
+
+    document.getElementById('app').addEventListener('click', (e) => {
+      if (e.target.closest('.obix-button--primary')) {
+        handleSubmit();
+      }
+
+      if (e.target.closest('.obix-alert__close')) {
+        appState.success = false;
+        render();
+      }
+    });
+
+    async function handleSubmit() {
+      appState.error = null;
+      appState.loading = true;
+      render();
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      const errors = {};
+
+      // Validate email
+      if (!appState.email) {
+        errors.email = 'Email is required';
+      } else if (!appState.email.includes('@')) {
+        errors.email = 'Please enter a valid email address';
+      }
+
+      // Validate password
+      if (!appState.password) {
+        errors.password = 'Password is required';
+      } else if (appState.password.length < 8) {
+        errors.password = 'Password must be at least 8 characters';
+      }
+
+      if (Object.keys(errors).length > 0) {
+        appState.error = errors;
+        appState.loading = false;
+        render();
+        return;
+      }
+
+      // Simulate authentication failure
+      if (appState.email !== 'demo@example.com' || appState.password !== 'password123') {
+        appState.error = { general: 'Invalid email or password' };
+        appState.loading = false;
+        render();
+        return;
+      }
+
+      // Success!
+      appState.success = true;
+      appState.loading = false;
+      appState.email = '';
+      appState.password = '';
+      render();
+    }
+
+    // Initial render
+    render();
+
+    // Log for debugging
+    console.log('OBIX JSX Components Demo Ready');
+    console.log('Try email: demo@example.com / password: password123');
+  </script>
+</body>
+</html>
