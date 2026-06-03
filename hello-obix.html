@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello OBIX</title>
+  <!-- OBIX core from CDN (ES modules) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@obinexusltd/obix": "https://cdn.jsdelivr.net/npm/@obinexusltd/obix@0.1.0/dist/obix.esm.js"
+    }
+  }
+  </script>
+  <style>
+    /* ============================================================
+       jfix.scss Design Tokens (minimal subset for demo)
+       ============================================================ */
+    :root {
+      --obix-primary: #0066cc;
+      --obix-primary-hover: #0052a3;
+      --obix-success: #28a745;
+      --obix-danger: #dc3545;
+      --obix-warning: #ffc107;
+      --obix-gray-50: #f9fafb;
+      --obix-gray-100: #f3f4f6;
+      --obix-gray-500: #6b7280;
+      --obix-gray-900: #111827;
+      --obix-touch-min: 48px;
+      --obix-space-1: 0.25rem;
+      --obix-space-2: 0.5rem;
+      --obix-space-3: 0.75rem;
+      --obix-space-4: 1rem;
+      --obix-space-6: 1.5rem;
+      --obix-radius: 8px;
+      --obix-shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+      --obix-shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: var(--obix-space-6);
+      background: var(--obix-gray-50);
+      color: var(--obix-gray-900);
+      line-height: 1.5;
+    }
+
+    h1 { font-size: 1.75rem; margin-bottom: var(--obix-space-2); }
+    h2 { font-size: 1.125rem; margin-bottom: var(--obix-space-3); color: var(--obix-gray-900); }
+    p { color: var(--obix-gray-500); margin-bottom: var(--obix-space-4); }
+
+    /* ============================================================
+       OBIX Component Styles
+       ============================================================ */
+    .obix-card {
+      background: white;
+      border-radius: 12px;
+      padding: var(--obix-space-6);
+      box-shadow: var(--obix-shadow-sm);
+      margin-bottom: var(--obix-space-4);
+    }
+
+    .obix-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: var(--obix-touch-min);
+      min-height: var(--obix-touch-min);
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--obix-radius);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    }
+
+    .obix-button:focus-visible {
+      outline: 2px solid var(--obix-primary);
+      outline-offset: 2px;
+    }
+
+    .obix-button--primary {
+      background: var(--obix-primary);
+      color: white;
+    }
+    .obix-button--primary:hover {
+      background: var(--obix-primary-hover);
+      transform: scale(1.02);
+      box-shadow: var(--obix-shadow-md);
+    }
+
+    .obix-button--danger {
+      background: var(--obix-danger);
+      color: white;
+    }
+    .obix-button--danger:hover {
+      background: #bd2130;
+    }
+
+    .obix-button--ghost {
+      background: transparent;
+      color: var(--obix-primary);
+      border: 1px solid var(--obix-primary);
+    }
+
+    .obix-button--loading {
+      opacity: 0.8;
+      cursor: wait;
+    }
+
+    .obix-button__spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: obix-spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes obix-spin { to { transform: rotate(360deg); } }
+
+    .obix-input {
+      width: 100%;
+      min-height: var(--obix-touch-min);
+      padding: 12px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: var(--obix-radius);
+      font-size: 1rem;
+      font-family: inherit;
+      background: white;
+    }
+
+    .obix-input:focus {
+      outline: 2px solid var(--obix-primary);
+      outline-offset: 2px;
+      border-color: var(--obix-primary);
+    }
+
+    .obix-input[aria-invalid="true"] {
+      border-color: var(--obix-danger);
+      background: #fef2f2;
+    }
+
+    .obix-error {
+      color: var(--obix-danger);
+      font-size: 0.875rem;
+      margin-top: var(--obix-space-1);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .obix-error::before {
+      content: "⚠";
+    }
+
+    .obix-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: var(--obix-space-1);
+      font-size: 0.875rem;
+    }
+
+    .obix-hint {
+      font-size: 0.875rem;
+      color: var(--obix-gray-500);
+      margin-top: var(--obix-space-1);
+    }
+
+    .demo-section { margin-bottom: var(--obix-space-6); }
+    .demo-section h2 { margin-top: 0; }
+
+    .state-preview {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: var(--obix-space-4);
+      border-radius: var(--obix-radius);
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    .state-preview .key { color: #93c5fd; }
+    .state-preview .string { color: #a7f3d0; }
+    .state-preview .boolean { color: #fca5a5; }
+    .state-preview .number { color: #fde047; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge--success { background: #d1fae5; color: #065f46; }
+    .badge--warning { background: #fef3c7; color: #92400e; }
+
+    .row { display: flex; gap: var(--obix-space-3); align-items: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <h1>👋 Hello OBIX</h1>
+  <p>
+    <span class="badge badge--success">Zero Build</span>
+    <span class="badge badge--warning">Data-Oriented</span>
+  </p>
+  <p>Open DevTools (F12) → Console to inspect live state. No npm. No build. Just a browser.</p>
+
+  <div id="app"></div>
+
+  <script type="module">
+    import { createButton, createInput } from '@obinexusltd/obix';
+
+    // ============================================================
+    // DEMO 1: Hello World — The simplest OBIX component
+    // ============================================================
+    const helloBtn = createButton({
+      label: 'Hello OBIX',
+      variant: 'primary',
+      size: 'md'
+    });
+    let helloState = helloBtn.state;
+
+    // ============================================================
+    // DEMO 2: Interactive Counter — State transitions
+    // ============================================================
+    let count = 0;
+    const counterBtn = createButton({
+      label: `Count: ${count}`,
+      variant: 'primary',
+      size: 'md'
+    });
+    let counterState = counterBtn.state;
+
+    // ============================================================
+    // DEMO 3: Form Input — Validation on blur
+    // ============================================================
+    const emailInput = createInput({
+      name: 'email',
+      type: 'email',
+      label: 'Email Address',
+      placeholder: 'you@example.com',
+      required: true,
+      validation: 'blur',
+      pattern: '^[\w.-]+@[\w.-]+\.\w+$',
+      ariaDescribedBy: 'email-error'
+    });
+    let emailState = emailInput.state;
+
+    // ============================================================
+    // DEMO 4: Async Loading — Simulated network request
+    // ============================================================
+    const saveBtn = createButton({
+      label: 'Save Changes',
+      variant: 'primary',
+      loading: false
+    });
+    let saveState = saveBtn.state;
+
+    // ============================================================
+    // RENDER ENGINE — You control when and how to render
+    // ============================================================
+    function render() {
+      const app = document.getElementById('app');
+
+      app.innerHTML = `
+        <!-- DEMO 1: Hello World -->
+        <div class="demo-section">
+          <div class="obix-card">
+            <h2>1. Hello World</h2>
+            <p>The simplest OBIX component. Click to log state to console.</p>
+            <div class="row">
+              ${helloBtn.render(helloState)}
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 2: Counter -->
+        <div class="demo-section">
+          <div class="obix-card">
+            <h2>2. Interactive Counter</h2>
+            <p>State transitions via actions. OBIX is immutable — each action returns new state.</p>
+            <div class="row">
+              ${counterBtn.render(counterState)}
+              <button id="reset-counter" class="obix-button obix-button--ghost">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 3: Form Validation -->
+        <div class="demo-section">
+          <div class="obix-card">
+            <h2>3. Form Validation</h2>
+            <p>Type an invalid email, then click outside (blur) to trigger validation.</p>
+            <label class="obix-label" for="email">Email Address</label>
+            ${emailInput.render(emailState)}
+            <p id="email-error" class="obix-error" role="alert" aria-live="assertive">
+              ${emailState.error || ''}
+            </p>
+            <p class="obix-hint">Pattern: user@domain.com</p>
+          </div>
+        </div>
+
+        <!-- DEMO 4: Async Loading -->
+        <div class="demo-section">
+          <div class="obix-card">
+            <h2>4. Async Loading State</h2>
+            <p>Simulates a network request. Notice the spinner and aria-busy attribute.</p>
+            <div class="row">
+              ${saveBtn.render(saveState)}
+            </div>
+          </div>
+        </div>
+
+        <!-- LIVE STATE INSPECTOR -->
+        <div class="demo-section">
+          <div class="obix-card">
+            <h2>🔍 Live State Inspector</h2>
+            <p>This updates on every render. State is plain data — serializable, testable, debuggable.</p>
+            <pre class="state-preview"><code>${syntaxHighlight(JSON.stringify({
+              hello: { label: helloState.label, variant: helloState.variant },
+              counter: { label: counterState.label, count: count },
+              email: {
+                value: emailState.value,
+                valid: emailState.valid,
+                error: emailState.error,
+                touched: emailState.touched
+              },
+              save: {
+                label: saveState.label,
+                loading: saveState.loading,
+                disabled: saveState.disabled
+              }
+            }, null, 2))}</code></pre>
+          </div>
+        </div>
+      `;
+
+      attachListeners();
+    }
+
+    // ============================================================
+    // EVENT HANDLERS — You wire them. OBIX does not.
+    // ============================================================
+    function attachListeners() {
+      // Demo 1: Hello button
+      const helloEl = document.querySelector('[data-obix="hello-btn"]');
+      if (helloEl) {
+        helloEl.addEventListener('click', () => {
+          console.log('%c[OBIX] Hello button clicked!', 'color: #0066cc; font-weight: bold;');
+          console.log('State:', helloState);
+          helloState = helloBtn.actions.click(helloState);
+          console.log('After action:', helloState);
+        });
+      }
+
+      // Demo 2: Counter
+      const counterEl = document.querySelector('[data-obix="counter-btn"]');
+      if (counterEl) {
+        counterEl.addEventListener('click', () => {
+          count++;
+          // BOTTLENECK: Label is config, not mutable state.
+          // We must recreate the component or manually update DOM.
+          // Here we manually update for demo purposes.
+          const labelSpan = counterEl.querySelector('.obix-button__label');
+          if (labelSpan) labelSpan.textContent = `Count: ${count}`;
+
+          console.log('%c[OBIX] Counter:', 'color: #0066cc; font-weight: bold;', count);
+        });
+      }
+
+      const resetEl = document.getElementById('reset-counter');
+      if (resetEl) {
+        resetEl.addEventListener('click', () => {
+          count = 0;
+          render(); // Full re-render to reset label
+        });
+      }
+
+      // Demo 3: Email input
+      const emailEl = document.getElementById('email');
+      if (emailEl) {
+        emailEl.addEventListener('input', (e) => {
+          emailState = emailInput.actions.change(emailState, e.target.value);
+          // Don't re-render on every keystroke — wait for blur
+          // But update the error display if already invalid
+          if (emailState.touched && emailState.error) {
+            render();
+          }
+        });
+
+        emailEl.addEventListener('blur', () => {
+          emailState = emailInput.actions.blur(emailState);
+          render();
+          console.log('%c[OBIX] Email validated:', 'color: #0066cc; font-weight: bold;', emailState.valid ? '✅ Valid' : '❌ ' + emailState.error);
+        });
+      }
+
+      // Demo 4: Save button
+      const saveEl = document.querySelector('[data-obix="save-btn"]');
+      if (saveEl) {
+        saveEl.addEventListener('click', () => {
+          saveState = saveBtn.actions.setLoading(saveState, true);
+          render();
+          console.log('%c[OBIX] Saving...', 'color: #0066cc; font-weight: bold;');
+
+          setTimeout(() => {
+            saveState = saveBtn.actions.setLoading(saveState, false);
+            render();
+            console.log('%c[OBIX] Saved!', 'color: #28a745; font-weight: bold;');
+          }, 2000);
+        });
+      }
+    }
+
+    // ============================================================
+    // SYNTAX HIGHLIGHTING for state preview
+    // ============================================================
+    function syntaxHighlight(json) {
+      return json
+        .replace(/"(\u[a-zA-Z0-9]{4}|\[^u]|[^\"])*"(?=\s*:)/g, '<span class="key">$&</span>')
+        .replace(/"(\u[a-zA-Z0-9]{4}|\[^u]|[^\"])*"/g, '<span class="string">$&</span>')
+        .replace(/(true|false)/g, '<span class="boolean">$&</span>')
+        .replace(/(\d+)/g, '<span class="number">$&</span>');
+    }
+
+    // ============================================================
+    // INITIAL RENDER
+    // ============================================================
+    render();
+
+    // Expose to window for console inspection
+    window.OBIX = {
+      helloBtn, counterBtn, emailInput, saveBtn,
+      getStates: () => ({ helloState, counterState, emailState, saveState, count }),
+      render
+    };
+
+    console.log('%c👋 Hello OBIX loaded!', 'color: #0066cc; font-size: 16px; font-weight: bold;');
+    console.log('%cType OBIX in console to inspect components.', 'color: #6b7280;');
+    console.log('%cExample: OBIX.getStates()', 'color: #6b7280;');
+  </script>
+</body>
+</html>
