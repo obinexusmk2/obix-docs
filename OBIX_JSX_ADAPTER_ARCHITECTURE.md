@@ -2,7 +2,7 @@
 
 **Version**: 1.0  
 **Date**: June 2026  
-**Status**: Design & Implementation
+**Status**: Implemented architecture for the packages in `runtime/`
 
 ---
 
@@ -15,7 +15,7 @@ The OBIX JSX Adapter enables developers to write OBIX components using standard 
 1. **JSX is Syntax Sugar** — JSX compiles to pure function calls, not virtual DOM
 2. **Component Independence** — OBIX components remain framework-agnostic
 3. **Paradigm Agnostic** — JSX components work with Functional, OOP, Reactive, and Data adapters
-4. **Standard Compliance** — Follows ECMAScript 2020+ and React JSX standards
+4. **JSX Syntax Compatibility** — Uses standard JSX compilation entry points while preserving OBIX's explicit render/data-object runtime
 5. **Zero Runtime Overhead** — Compilation produces plain OBIX component definitions
 
 ---
@@ -84,7 +84,7 @@ The OBIX JSX Adapter enables developers to write OBIX components using standard 
 
 ## Package Structure
 
-### New Packages to Create
+### Implemented Packages
 
 ```
 @obinexusltd/

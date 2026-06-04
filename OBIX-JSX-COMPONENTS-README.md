@@ -14,10 +14,10 @@
 
 ### Core Philosophy
 
-**JSX is syntax sugar. Components are data objects.**
+**JSX is syntax sugar. Components are instantiated OBIX data objects.**
 
 ```tsx
-// JSX Input (React specification-compliant)
+// JSX authoring syntax
 <obix-button label="Save" variant="primary" />
 
 // ↓ (TypeScript compiler)
@@ -150,6 +150,8 @@ document.getElementById('app').innerHTML = form.render(form.state);
 
 ### 3. Server-Side Rendering
 
+OBIX supports string rendering on the server for components that do not depend on browser-only configuration or runtime objects.
+
 ```typescript
 import express from 'express';
 import { h } from '@obinexusltd/obix-jsx-adapter';
@@ -176,6 +178,13 @@ app.get('/', (req, res) => {
 
 app.listen(3000);
 ```
+
+SSR guidance:
+- SSR-safe: components that only need serializable config and `.render(state)`
+- Browser-enhanced: components that can render on the server but need browser APIs for interaction
+- Browser-only: components whose config or lifecycle requires `HTMLElement`, `window`, or `document`
+
+JSX in OBIX does not create deferred virtual nodes. `h()` instantiates component objects immediately, so JSX here is not a React runtime replacement.
 
 ---
 
